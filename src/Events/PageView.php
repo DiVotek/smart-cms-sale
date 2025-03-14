@@ -15,7 +15,6 @@ class PageView
         }
         if ($layout->path == 'sale/sale') {
             $component->dto = SaleDto::make();
-            dd($component->dto);
         }
     }
 }

@@ -4,6 +4,8 @@ namespace SmartCms\Sale;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Sale\Events\PageLayout;
 use SmartCms\Sale\Events\PageView;
 
 class SaleServiceProvider extends ServiceProvider
@@ -18,5 +20,6 @@ class SaleServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen('cms.page.construct', PageView::class);
+        StaticPageResource::registerHook('page.layout', PageLayout::class);
     }
 }

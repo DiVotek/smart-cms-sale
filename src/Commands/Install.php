@@ -14,46 +14,24 @@ class Install extends Command
 
     public function handle()
     {
-        $layout = $this->createLayout('sale');
-        $page = $this->createPage('Sale', 'sale', $layout);
+        $this->call('make:layout', [
+            'name' => 'sale.index',
+        ]);
+        $layout = Layout::query()->where('path', 'sale.index')->first();
+        if (!$layout) {
+            $this->error('Layout not found');
+            return;
+        }
+        $page = Page::query()->updateOrCreate([
+            'slug' => 'sale',
+        ], [
+            'name' => 'Sale',
+            'layout_id' => $layout->id,
+        ]);
         setting([
-            'pages.sale' => $page,
+            'pages.sale' => $page->id,
         ]);
         $this->call('optimize:clear');
         $this->info('Installed Smart CMS sale module');
-    }
-
-    public function createLayout(string $name): int
-    {
-        $this->call('make:layout', [
-            'name' => $name,
-        ]);
-        $layout = Layout::query()->updateOrCreate(
-            [
-                'path' => $name . '/' . $name,
-            ],
-            [
-                'name' => ucfirst($name),
-                'template' => template(),
-                'status' => 1,
-                'schema' => [],
-                'value' => [],
-            ]
-        );
-
-        return $layout->id;
-    }
-
-    public function createPage(string $name, string $slug, int $layout): int
-    {
-        $page = Page::query()->updateOrCreate(
-            ['slug' => $slug],
-            [
-                'name' => $name,
-                'layout' => $layout,
-            ]
-        );
-
-        return $page->id;
     }
 }
